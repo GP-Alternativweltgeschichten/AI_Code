@@ -1,0 +1,22 @@
+Im Terminal:
+
+- Environment erstellen
+conda create env -n OlpeAI
+
+- Environment aktivieren
+conda activate OlpeAI
+
+- Bibliotheken installieren
+pip install fastapi uvicorn pydantic diffusers pillow torch
+
+- Bibliotheken für GPU Verwendung
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+- Bibliothek für Test-Client
+pip install requests
+
+- Server starten
+python ./Server/inpaint_REST.py
+
+- Test Client starten
+python ./Client/rest_client.py
