@@ -12,7 +12,7 @@ from io import BytesIO
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # pipe = StableDiffusionInpaintPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 # pipe = StableDiffusionPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-pipe = pipe.to(device)
+# pipe = pipe.to(device)
 
 # Request Typen
 class InpaintRequest(BaseModel):
