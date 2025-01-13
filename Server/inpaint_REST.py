@@ -11,7 +11,7 @@ from io import BytesIO
 # Modell einmalig laden
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # pipe = StableDiffusionInpaintPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-pipe = StableDiffusionPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+# pipe = StableDiffusionPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 pipe = pipe.to(device)
 
 # Request Typen
@@ -50,7 +50,9 @@ async def text(
     request: PromptRequest
 ):
     # Bild generieren
-    result = pipe(prompt=request.prompt).images[0]
+    # result = pipe(prompt=request.prompt).images[0]
+
+    result = Image.open("test.png")
 
     # Ergebnis zurückgeben
     output_buffer = BytesIO()

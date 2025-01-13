@@ -1,7 +1,7 @@
 Im Terminal:
 
 - Environment erstellen
-conda create env -n OlpeAI
+conda create -n OlpeAI
 
 - Environment aktivieren
 conda activate OlpeAI
