@@ -1,3 +1,6 @@
+import base64
+from os import pipe
+
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -10,6 +13,8 @@ from io import BytesIO
 
 # Modell einmalig laden
 device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 # pipe = StableDiffusionInpaintPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 # pipe = StableDiffusionPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 # pipe = pipe.to(device)
@@ -17,8 +22,9 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # Request Typen
 class InpaintRequest(BaseModel):
     prompt: str
-    image: UploadFile = File(...)
-    mask : UploadFile = File(...)
+    image: str
+    mask: str
+
 
 class PromptRequest(BaseModel):
     prompt: str
@@ -27,9 +33,10 @@ class PromptRequest(BaseModel):
 # Initialisiere die API
 app = FastAPI()
 
+
 @app.post("/inpaint/")
 async def inpaint(
-    request: InpaintRequest
+        request: InpaintRequest
 ):
     # Lade Eingabebilder
     initial_image = Image.open(BytesIO(await request.image.read())).convert("RGB")
@@ -47,7 +54,7 @@ async def inpaint(
 
 @app.post("/text/")
 async def text(
-    request: PromptRequest
+        request: PromptRequest
 ):
     # Bild generieren
     # result = pipe(prompt=request.prompt).images[0]
@@ -61,7 +68,26 @@ async def text(
     return StreamingResponse(content=output_buffer, media_type="image/png")
 
 
+@app.post("/inpainting/")
+async def text_and_image(
+        request: InpaintRequest
+):
+    image_data = base64.b64decode(request.image.split(",")[1])
+
+    image = Image.open(BytesIO(image_data))
+
+    image.save("received_image.png")
+    print("Bild wurde gespeichert: received_image.png")
+
+    output_buffer = BytesIO()
+    image.save(output_buffer, format="PNG")
+    output_buffer.seek(0)
+
+    return StreamingResponse(content=output_buffer, media_type="image/png")
+
+
 # Starte den Server
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
