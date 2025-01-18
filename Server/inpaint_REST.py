@@ -73,10 +73,13 @@ async def text_and_image(
         request: InpaintRequest
 ):
     image_data = base64.b64decode(request.image.split(",")[1])
+    mask_data = base64.b64decode(request.mask.split(",")[1])
 
     image = Image.open(BytesIO(image_data))
+    mask = Image.open(BytesIO(mask_data))
 
     image.save("received_image.png")
+    mask.save("received_mask.png")
     print("Bild wurde gespeichert: received_image.png")
 
     output_buffer = BytesIO()
