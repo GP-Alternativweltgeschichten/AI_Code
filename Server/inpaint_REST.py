@@ -72,19 +72,33 @@ async def text(
 async def text_and_image(
         request: InpaintRequest
 ):
-    image_data = base64.b64decode(request.image.split(",")[1])
-    mask_data = base64.b64decode(request.mask.split(",")[1])
+    if request.mask is None or not request.mask.strip():
+        # Image to Image
+        image_data = base64.b64decode(request.image.split(",")[1])
+        image = Image.open(BytesIO(image_data))
 
-    image = Image.open(BytesIO(image_data))
-    mask = Image.open(BytesIO(mask_data))
+        image.save("received_image.png")
+        print("ImageToImage: saved received_image.png")
 
-    image.save("received_image.png")
-    mask.save("received_mask.png")
-    print("Bild wurde gespeichert: received_image.png")
+        output_buffer = BytesIO()
+        image.save(output_buffer, format="PNG")
+        output_buffer.seek(0)
+    else:
+        # Inpainting
+        image_data = base64.b64decode(request.image.split(",")[1])
+        mask_data = base64.b64decode(request.mask.split(",")[1])
 
-    output_buffer = BytesIO()
-    image.save(output_buffer, format="PNG")
-    output_buffer.seek(0)
+        image = Image.open(BytesIO(image_data))
+        mask = Image.open(BytesIO(mask_data))
+
+        image.save("received_image.png")
+        print("Inpaint: saved received_image.png")
+        mask.save("received_mask.png")
+        print("Inpaint: saved received_mask.png")
+
+        output_buffer = BytesIO()
+        image.save(output_buffer, format="PNG")
+        output_buffer.seek(0)
 
     return StreamingResponse(content=output_buffer, media_type="image/png")
 
