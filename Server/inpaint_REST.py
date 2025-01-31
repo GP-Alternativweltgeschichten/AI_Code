@@ -14,11 +14,15 @@ from io import BytesIO
 # Modell einmalig laden
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-
-pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("SebastianEngelberth/Olpe_Model", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-pipe_imgtoimg = StableDiffusionPipeline.from_pretrained("SebastianEngelberth/Olpe_Model", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",
+                                                              torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+                                                              safety_checker=None,
+                                                              requires_safety_checker=False)
+# pipe_imgtoimg = StableDiffusionPipeline.from_pretrained("SebastianEngelberth/Olpe_Model_15k", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 pipe_inpaint = pipe_inpaint.to(device)
-pipe_imgtoimg = pipe_imgtoimg.to(device)
+
+
+# pipe_imgtoimg = pipe_imgtoimg.to(device)
 
 # Request Typen
 class InpaintRequest(BaseModel):
@@ -78,10 +82,10 @@ async def text_and_image(
         image_data = base64.b64decode(request.image.split(",")[1])
         image = Image.open(BytesIO(image_data)).convert("RGB")
 
-        result = pipe_imgtoimg(prompt=request.prompt, image=image).images[0]
+        # result = pipe_imgtoimg(prompt=request.prompt, image=image).images[0]
 
         output_buffer = BytesIO()
-        result.save(output_buffer, format="PNG")
+        # result.save(output_buffer, format="PNG")
         output_buffer.seek(0)
     else:
         # Inpainting
@@ -91,12 +95,39 @@ async def text_and_image(
         image = Image.open(BytesIO(image_data)).convert("RGB")
         mask = Image.open(BytesIO(mask_data)).convert("RGBA")
 
-        new_mask = Image.new("RGBA", image.size)
+        mask_region, new_mask = crop_masked_region(image, mask)
+        new_mask.save("processed_image.png")
+        mask_region.save("image_mask.png")
+
+        result = pipe_inpaint(prompt=request.prompt, image=mask_region, mask_image=new_mask, strength=0.9,
+                              num_inference_steps=200).images[0]
+
+        final_image = insert_inpainted_region(image, result, mask)
+
+        # Ergebnis zurückgeben
+        output_buffer = BytesIO()
+        final_image.save(output_buffer, format="PNG")
+        output_buffer.seek(0)
+
+    return StreamingResponse(content=output_buffer, media_type="image/png")
+
+
+def crop_masked_region(image, mask):
+    """
+    Schneidet das Bild und die Maske auf die minimal erforderliche Größe zu.
+    """
+    bbox = mask.getbbox()
+
+    if bbox:
+        cropped_image = image.crop(bbox)
+        cropped_mask = mask.crop(bbox)
+
+        new_mask = Image.new("RGBA", cropped_mask.size)
 
         # Maske konvertieren
-        for x in range(mask.width):
-            for y in range(mask.height):
-                r, g, b, a = mask.getpixel((x, y))
+        for x in range(cropped_mask.width):
+            for y in range(cropped_mask.height):
+                r, g, b, a = cropped_mask.getpixel((x, y))
 
                 if a == 0:
                     new_mask.putpixel((x, y), (0, 0, 0, 255))
@@ -105,19 +136,29 @@ async def text_and_image(
                 else:
                     new_mask.putpixel((x, y), (r, g, b, a))
 
-
         new_mask = new_mask.convert("RGB")
-        new_mask.save("processed_image.png")
-        new_mask.show()
 
-        result = pipe_inpaint(prompt=request.prompt, image=image, mask_image=new_mask).images[0]
+        return cropped_image, new_mask
+    else:
+        return None, None
 
-        # Ergebnis zurückgeben
-        output_buffer = BytesIO()
-        result.save(output_buffer, format="PNG")
-        output_buffer.seek(0)
 
-    return StreamingResponse(content=output_buffer, media_type="image/png")
+def insert_inpainted_region(original_image, result_image, mask):
+    """
+    Setzt das Ergebnis des Modells wieder an die richtige Stelle im ursprünglichen Bild ein.
+    """
+    bbox = mask.getbbox()
+
+    if not bbox:
+        return original_image
+
+    cropped_result = result_image.resize((bbox[2] - bbox[0], bbox[3] - bbox[1]), Image.LANCZOS)
+
+    result = original_image.copy()
+
+    result.paste(cropped_result, (bbox[0], bbox[1]))
+
+    return result
 
 
 # Starte den Server
