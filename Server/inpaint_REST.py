@@ -5,7 +5,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-# from diffusers import StableDiffusionInpaintPipeline
+from diffusers import StableDiffusionInpaintPipeline
 from diffusers import StableDiffusionPipeline
 from PIL import Image
 import torch
@@ -15,9 +15,10 @@ from io import BytesIO
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-# pipe = StableDiffusionInpaintPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-# pipe = StableDiffusionPipeline.from_pretrained("satbilder-test5", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-# pipe = pipe.to(device)
+pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("SebastianEngelberth/Olpe_Model_15k", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+pipe_imgtoimg = StableDiffusionPipeline.from_pretrained("SebastianEngelberth/Olpe_Model_15k", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+pipe_inpaint = pipe_inpaint.to(device)
+pipe_imgtoimg = pipe_imgtoimg.to(device)
 
 # Request Typen
 class InpaintRequest(BaseModel):
@@ -77,11 +78,10 @@ async def text_and_image(
         image_data = base64.b64decode(request.image.split(",")[1])
         image = Image.open(BytesIO(image_data))
 
-        image.save("received_image.png")
-        print("ImageToImage: saved received_image.png")
+        result = pipe_imgtoimg(prompt=request.prompt, image=image).images[0]
 
         output_buffer = BytesIO()
-        image.save(output_buffer, format="PNG")
+        result.save(output_buffer, format="PNG")
         output_buffer.seek(0)
     else:
         # Inpainting
@@ -91,13 +91,11 @@ async def text_and_image(
         image = Image.open(BytesIO(image_data))
         mask = Image.open(BytesIO(mask_data))
 
-        image.save("received_image.png")
-        print("Inpaint: saved received_image.png")
-        mask.save("received_mask.png")
-        print("Inpaint: saved received_mask.png")
+        result = pipe_inpaint(prompt=request.prompt, image=image, mask_image=mask).images[0]
 
+        # Ergebnis zurückgeben
         output_buffer = BytesIO()
-        image.save(output_buffer, format="PNG")
+        result.save(output_buffer, format="PNG")
         output_buffer.seek(0)
 
     return StreamingResponse(content=output_buffer, media_type="image/png")
