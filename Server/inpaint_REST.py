@@ -15,8 +15,8 @@ from io import BytesIO
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("SebastianEngelberth/Olpe_Model_15k", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
-pipe_imgtoimg = StableDiffusionPipeline.from_pretrained("SebastianEngelberth/Olpe_Model_15k", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("SebastianEngelberth/Olpe_Model", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
+pipe_imgtoimg = StableDiffusionPipeline.from_pretrained("SebastianEngelberth/Olpe_Model", torch_dtype=torch.float16 if device == "cuda" else torch.float32)
 pipe_inpaint = pipe_inpaint.to(device)
 pipe_imgtoimg = pipe_imgtoimg.to(device)
 
@@ -76,7 +76,7 @@ async def text_and_image(
     if request.mask is None or not request.mask.strip():
         # Image to Image
         image_data = base64.b64decode(request.image.split(",")[1])
-        image = Image.open(BytesIO(image_data))
+        image = Image.open(BytesIO(image_data)).convert("RGB")
 
         result = pipe_imgtoimg(prompt=request.prompt, image=image).images[0]
 
@@ -88,8 +88,8 @@ async def text_and_image(
         image_data = base64.b64decode(request.image.split(",")[1])
         mask_data = base64.b64decode(request.mask.split(",")[1])
 
-        image = Image.open(BytesIO(image_data))
-        mask = Image.open(BytesIO(mask_data))
+        image = Image.open(BytesIO(image_data)).convert("RGB")
+        mask = Image.open(BytesIO(mask_data)).convert("RGB")
 
         result = pipe_inpaint(prompt=request.prompt, image=image, mask_image=mask).images[0]
 
