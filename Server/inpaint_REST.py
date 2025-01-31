@@ -89,9 +89,28 @@ async def text_and_image(
         mask_data = base64.b64decode(request.mask.split(",")[1])
 
         image = Image.open(BytesIO(image_data)).convert("RGB")
-        mask = Image.open(BytesIO(mask_data)).convert("RGB")
+        mask = Image.open(BytesIO(mask_data)).convert("RGBA")
 
-        result = pipe_inpaint(prompt=request.prompt, image=image, mask_image=mask).images[0]
+        new_mask = Image.new("RGBA", image.size)
+
+        # Maske konvertieren
+        for x in range(mask.width):
+            for y in range(mask.height):
+                r, g, b, a = mask.getpixel((x, y))
+
+                if a == 0:
+                    new_mask.putpixel((x, y), (0, 0, 0, 255))
+                elif r == 0 and g == 0 and b == 0:
+                    new_mask.putpixel((x, y), (255, 255, 255, 255))
+                else:
+                    new_mask.putpixel((x, y), (r, g, b, a))
+
+
+        new_mask = new_mask.convert("RGB")
+        new_mask.save("processed_image.png")
+        new_mask.show()
+
+        result = pipe_inpaint(prompt=request.prompt, image=image, mask_image=new_mask).images[0]
 
         # Ergebnis zurückgeben
         output_buffer = BytesIO()
