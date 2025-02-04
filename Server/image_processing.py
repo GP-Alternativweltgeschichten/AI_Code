@@ -76,7 +76,6 @@ def inpaint_image(prompt, image, mask, modell_pipe: pipe):
     cropped_image.save("img.png")
     cropped_mask.save("mask.png")
 
-    #result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=cropped_mask, strength=0.9,
-    #                      num_inference_steps=200).images[0]
-    result = cropped_image
+    result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=cropped_mask, strength=0.9,
+                          num_inference_steps=200).images[0]
     return insert_inpainted_region(image, result, mask)
