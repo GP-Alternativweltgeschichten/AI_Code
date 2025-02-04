@@ -3,6 +3,7 @@ from io import BytesIO
 
 from PIL import Image
 from pydantic import BaseModel
+from deep_translator import GoogleTranslator
 
 from image_processing import convert_mask
 
@@ -23,7 +24,8 @@ class InpaintRequest(BaseModel):
         return convert_mask(mask)
 
     def get_prepared_prompt(self):
-        return f'Satellite view of {self.prompt}'
+        new_prompt = GoogleTranslator(source='de', target='en').translate(self.prompt)
+        return f'Aerial view of {new_prompt}'
 
 
 class PromptRequest(BaseModel):
