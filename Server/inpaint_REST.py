@@ -41,6 +41,8 @@ async def inpaint(
         mask = request.get_mask_as_rgb()
         prompt = request.get_prepared_prompt()
 
+        print(prompt)
+
         result = inpaint_image(prompt, image, mask, pipe_inpaint)
 
         # Ergebnis zurückgeben

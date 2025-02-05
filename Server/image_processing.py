@@ -12,14 +12,12 @@ def convert_mask(mask):
 
             if a == 0:
                 new_mask.putpixel((x, y), (0, 0, 0, 255))
-            elif r == 0 and g == 0 and b == 0:
-                new_mask.putpixel((x, y), (255, 255, 255, 255))
             else:
-                new_mask.putpixel((x, y), (r, g, b, a))
+                new_mask.putpixel((x, y), (255, 255, 255, 255))
 
     return new_mask
 
-def crop_masked_region(image, mask, padding=20):
+def crop_masked_region(image, mask, padding=50):
     """
     Schneidet das Bild und die Maske auf die minimal erforderliche Größe zu, erweitert den Bereich um `padding` Pixel,
     ohne über die Bildgrenzen hinauszugehen.
@@ -42,7 +40,7 @@ def crop_masked_region(image, mask, padding=20):
         return None, None
 
 
-def insert_inpainted_region(original_image, result_image, mask, padding=20):
+def insert_inpainted_region(original_image, result_image, mask, padding=50):
     """
     Setzt das Ergebnis des Modells wieder an die richtige Stelle im ursprünglichen Bild ein,
     wobei der Bereich um `padding` Pixel erweitert wird, ohne über die Bildgrenzen hinauszugehen.
