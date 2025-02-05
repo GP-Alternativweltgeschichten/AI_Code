@@ -4,9 +4,7 @@ import numpy as np
 import cv2
 import trimesh
 import open3d as o3d
-import matplotlib.pyplot as plt
 
-mesh = trimesh.load_mesh("./olpe_topologie.stl")
 
 def convert_mask(mask):
     """
@@ -70,6 +68,8 @@ def insert_inpainted_region(original_image, result_image, mask, padding=50):
     result = original_image.copy()
     result.paste(cropped_result, (left, upper))
 
+    transform_img(result)
+
     return result
 
 def inpaint_image(prompt, image, mask, modell_pipe: pipe):
@@ -83,18 +83,29 @@ def inpaint_image(prompt, image, mask, modell_pipe: pipe):
 
     result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=cropped_mask, strength=0.9,
                           num_inference_steps=200).images[0]
+
     return insert_inpainted_region(image, result, mask)
 
 def transform_img(img):
+    mesh = trimesh.load_mesh("./olpe_topologie.stl")
+
     vertices = np.array(mesh.vertices)
     faces = np.array(mesh.faces)
 
-    # Beamer position
+    x_min, x_max = vertices[:, 0].min(), vertices[:, 0].max()
+    y_min, y_max = vertices[:, 1].min(), vertices[:, 1].max()
+    z_min, z_max = vertices[:, 2].min(), vertices[:, 2].max()
+
     proj_corners_3d = np.float32([
-        vertices[0],  # Punkt 1 auf STL
-        vertices[10],  # Punkt 2
-        vertices[100],  # Punkt 3
-        vertices[500]  # Punkt 4
+        [x_min, y_min, z_max],
+        [x_max, y_min, z_max],
+        [x_max, y_max, z_min],
+        [x_min, y_max, z_min]
+    ])
+
+    proj_corners_3d_2d = proj_corners_3d[:, :2]
+    proj_corners_3d_2d = np.float32([
+        [100,100], [500,100], [500,600], [100,600]
     ])
 
     image_w, image_h = 1920, 1080  # Beamer-Auflösung
@@ -102,10 +113,10 @@ def transform_img(img):
         [0, 0], [image_w, 0], [image_w, image_h], [0, image_h]
     ])
 
-    M_forward = cv2.getPerspectiveTransform(proj_corners_2d, proj_corners_3d)
+    M_forward = cv2.getPerspectiveTransform(proj_corners_2d, proj_corners_3d_2d)
 
-    warped_image = cv2.warpPerspective(img, M_forward, (image_w, image_h))
-
-    plt.imshow(cv2.cvtColor(warped_image, cv2.COLOR_BGR2RGB))
-    plt.title("Projektionsbild für Beamer")
-    plt.show()
+    image = np.array(img, dtype=np.uint8)
+    warped_image = cv2.warpPerspective(image, M_forward, (image_w, image_h))
+    cv2.imwrite("warped_img.png", warped_image)
+    print(proj_corners_2d)
+    print(proj_corners_3d_2d)
