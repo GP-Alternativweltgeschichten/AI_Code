@@ -4,6 +4,7 @@ from io import BytesIO
 from PIL import Image
 from pydantic import BaseModel
 from deep_translator import GoogleTranslator
+from deep_translator.exceptions import TranslationNotFound
 
 from image_processing import convert_mask
 
@@ -25,8 +26,12 @@ class InpaintRequest(BaseModel):
         return convert_mask(mask)
 
     def get_prepared_prompt(self):
-        new_prompt = GoogleTranslator(source='de', target='en').translate(self.prompt)
-        return f'Aerial view of {new_prompt}'
+        try:
+            translation = GoogleTranslator(source="de", target="en").translate(self.prompt)
+        except TranslationNotFound:
+            translation = self.prompt
+        print(translation)
+        return f'An aerial view of the city Olpe: {translation}.'
 
 
 class PromptRequest(BaseModel):
