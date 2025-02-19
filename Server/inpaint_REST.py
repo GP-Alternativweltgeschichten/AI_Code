@@ -5,8 +5,8 @@ from diffusers import StableDiffusionInpaintPipeline
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 
-from Server.prompt_engineering import get_enhanced_prompt
-from image_processing import inpaint_image
+from image_processing import inpaint_image_with_custom_model, inpaint_image_with_dalle
+from prompt_engineering import get_enhanced_prompt
 from request_types import InpaintRequest
 
 # Modell einmalig laden
@@ -36,14 +36,16 @@ async def inpaint(
         # Inpainting
         image = request.get_image_as_rgb()
         mask = request.get_mask_as_rgb()
-        prompt = request.get_prepared_prompt()
+        prompt = request.prompt
+        model = request.realism
 
-        # Prompt Enhancing
-        prompt = get_enhanced_prompt(prompt)
-
-        print(prompt)
-
-        result = inpaint_image(prompt, image, mask, pipe_inpaint)
+        if model != model:
+            prompt = request.get_prepared_prompt()
+            # Prompt Enhancing
+            prompt = get_enhanced_prompt(prompt)
+            result = inpaint_image_with_custom_model(prompt, image, mask, pipe_inpaint)
+        else:
+            result = inpaint_image_with_dalle(prompt, image, mask)
 
         # Ergebnis zurückgeben
         return send_image_as_png(result)

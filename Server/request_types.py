@@ -2,12 +2,9 @@ import base64
 from io import BytesIO
 
 from PIL import Image
-from pydantic import BaseModel
 from deep_translator import GoogleTranslator
 from deep_translator.exceptions import TranslationNotFound
-
-from image_processing import convert_mask
-
+from pydantic import BaseModel
 
 # Request Typen
 class InpaintRequest(BaseModel):
@@ -23,7 +20,7 @@ class InpaintRequest(BaseModel):
     def get_mask_as_rgb(self):
         mask_data = base64.b64decode(self.mask.split(",")[1])
         mask = Image.open(BytesIO(mask_data)).convert("RGBA")
-        return convert_mask(mask)
+        return mask
 
     def get_prepared_prompt(self):
         try:
