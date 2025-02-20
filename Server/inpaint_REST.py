@@ -37,9 +37,9 @@ async def inpaint(
         image = request.get_image_as_rgb()
         mask = request.get_mask_as_rgb()
         prompt = request.prompt
-        model = request.realism
+        model = request.model
 
-        if model != model:
+        if model == 0:
             prompt = request.get_prepared_prompt()
             # Prompt Enhancing
             prompt = get_enhanced_prompt(prompt)
