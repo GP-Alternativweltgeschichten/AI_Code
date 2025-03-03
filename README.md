@@ -20,7 +20,7 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
    Vor dem Dateipfad sollte nun der Name der Anaconda-Umgebung stehen. <br>
    Ist dies nicht der Fall, kann mit dem folgenden Befehl die Anaconda-Umgebung aktiviert werden:
    ```sh
-   conda activate \<Name der Umgebung\>
+   conda activate <Name der Umgebung>
    ```
 7. Installieren Sie in dem Terminal alle relevanten Python-Bibliotheken. <br>
    Verwenden Sie dazu die Befehle:
