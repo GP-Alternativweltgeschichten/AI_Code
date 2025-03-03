@@ -28,7 +28,7 @@ class InpaintRequest(BaseModel):
         except TranslationNotFound:
             translation = self.prompt
         print(translation)
-        return f'An aerial view of the city Olpe: {translation}.'
+        return f'{translation}.'
 
 
 class PromptRequest(BaseModel):

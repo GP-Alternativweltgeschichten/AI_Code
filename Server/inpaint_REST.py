@@ -12,7 +12,7 @@ from request_types import InpaintRequest
 # Modell einmalig laden
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("GP-Alternativweltgeschichten/Olpe_Model_05_02",
+pipe_inpaint = StableDiffusionInpaintPipeline.from_pretrained("GP-Alternativweltgeschichten/OlpeAI",
                                                               torch_dtype=torch.float16 if device == "cuda" else torch.float32,
                                                               safety_checker=None,
                                                               requires_safety_checker=False)
