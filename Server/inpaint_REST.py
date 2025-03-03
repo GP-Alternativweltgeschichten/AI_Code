@@ -38,12 +38,13 @@ async def inpaint(
         mask = request.get_mask_as_rgb()
         prompt = request.prompt
         model = request.model
+        guidance_scale = request.guidance_scale
 
         if model == 0:
             prompt = request.get_prepared_prompt()
             # Prompt Enhancing
             prompt = get_enhanced_prompt(prompt)
-            result = inpaint_image_with_custom_model(prompt, image, mask, pipe_inpaint)
+            result = inpaint_image_with_custom_model(prompt, image, mask, guidance_scale, pipe_inpaint)
         else:
             result = inpaint_image_with_dalle(prompt, image, mask)
 

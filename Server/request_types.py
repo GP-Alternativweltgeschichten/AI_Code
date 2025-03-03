@@ -12,6 +12,7 @@ class InpaintRequest(BaseModel):
     image: str
     mask: str
     model: int
+    guidance_scale: int
 
     def get_image_as_rgb(self):
         image_data = base64.b64decode(self.image.split(",")[1])

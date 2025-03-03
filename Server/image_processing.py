@@ -87,14 +87,14 @@ def insert_inpainted_region(original_image, result_image, bbox):
     return result
 
 
-def inpaint_image_with_custom_model(prompt, image, mask, modell_pipe: pipe):
+def inpaint_image_with_custom_model(prompt, image, mask, guidance_scale, modell_pipe: pipe):
     """
     Führt das Inpainting durch.
     """
     cropped_image, cropped_mask, bbox = crop_masked_region(image, mask)
     converted_mask = convert_mask(cropped_mask, False)
 
-    result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=converted_mask, strength=0.95,
+    result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=converted_mask, strength=0.95, guidance_scale=guidance_scale,
                          num_inference_steps=200).images[0]
     return insert_inpainted_region(image, result, bbox)
 
