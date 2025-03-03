@@ -18,5 +18,5 @@ pip install requests
 - Server starten
 python ./Server/inpaint_REST.py
 
-- Test Client starten
+- Optional: Client starten (Nur zum Testen; Client hat ältere Version)
 python ./Client/rest_client.py
