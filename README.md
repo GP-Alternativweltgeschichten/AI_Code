@@ -5,7 +5,9 @@ Dieser Code wurde entwickelt, um den Museumsbesuchern die Möglichkeit zu geben,
 Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Serververbindung mit dem Backend, zum Verarbeiten von Prompts, und ein Skript zum Testen des Servers direkt mit Python.
 
 ## 📖 Inhalt
-
+- [Installation](#installation)
+- [Anwendung ausführen](#anwendung-ausführen)
+- [Projektstruktur](#projektstruktur)
 
 ## ⚙️ Installation
 1. Installieren Sie eine Python-Entwicklungsumgebung und ein Tool zum Verwalten von Python-Umgebungen (Theoretisch optional, aber sehr hilfreich). <br>
