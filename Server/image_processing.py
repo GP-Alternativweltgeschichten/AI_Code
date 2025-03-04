@@ -114,7 +114,7 @@ def inpaint_image_with_custom_model(prompt, image, mask, guidance_scale, modell_
     """
     Führt das Inpainting durch.
     """
-    cropped_image, cropped_mask, bbox = crop_masked_region(image, mask, resize=False)
+    cropped_image, cropped_mask, bbox = crop_masked_region(image, mask, target_size=(768,768), resize=True)
     converted_mask = convert_mask(cropped_mask, False)
 
     result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=converted_mask, strength=0.95, guidance_scale=guidance_scale,
