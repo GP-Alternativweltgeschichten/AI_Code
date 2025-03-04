@@ -30,7 +30,7 @@ def convert_mask(mask, transparency=True):
     return new_mask
 
 
-def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024)):
+def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024), resize=True):
     """
     Schneidet das Bild und die Maske auf die minimal erforderliche Größe zu, erweitert den Bereich um `padding` Pixel,
     und skaliert es auf `target_size`, um eine standardisierte Eingabegröße für das Modell zu gewährleisten.
@@ -52,13 +52,18 @@ def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024)):
         cropped_mask = mask.crop((left, upper, right, lower))
 
         # Skalierung auf das Zielbildformat
-        resized_image = cropped_image.resize(target_size, Image.LANCZOS)
-        resized_mask = cropped_mask.resize(target_size, Image.LANCZOS)
+        if resize:
+            resized_image = cropped_image.resize(target_size, Image.LANCZOS)
+            resized_mask = cropped_mask.resize(target_size, Image.LANCZOS)
+            resized_image.save("./img/cropped_income_image.png")
+            resized_mask.save("./img/cropped_mask.png")
 
-        resized_image.save("./img/cropped_income_image.png")
-        resized_mask.save("./img/cropped_mask.png")
+            return resized_image, resized_mask, (left, upper, right, lower)
 
-        return resized_image, resized_mask, (left, upper, right, lower)
+        cropped_image.save("./img/cropped_income_image.png")
+        cropped_mask.save("./img/cropped_mask.png")
+
+        return cropped_image, cropped_mask, (left, upper, right, lower)
     else:
         return None, None, None
 
@@ -67,7 +72,7 @@ def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024)):
 def insert_inpainted_region(original_image, result_image, bbox):
     """
     Setzt das Ergebnis des Modells wieder an die richtige Stelle im ursprünglichen Bild ein,
-    nachdem es von 1024x1024 auf die ursprüngliche Bounding Box zurückskaliert wurde.
+    nachdem es auf die ursprüngliche Bounding Box zurückskaliert wurde.
     """
     if not bbox:
         return original_image
@@ -91,11 +96,14 @@ def inpaint_image_with_custom_model(prompt, image, mask, guidance_scale, modell_
     """
     Führt das Inpainting durch.
     """
-    cropped_image, cropped_mask, bbox = crop_masked_region(image, mask, target_size=(768,768))
+    cropped_image, cropped_mask, bbox = crop_masked_region(image, mask, resize=False)
     converted_mask = convert_mask(cropped_mask, False)
 
+    left, upper, right, lower = bbox
+    width, height = right - left, lower - upper
+
     result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=converted_mask, strength=0.95, guidance_scale=guidance_scale,
-                         num_inference_steps=200).images[0]
+                         num_inference_steps=200, width = width, height = height).images[0]
     return insert_inpainted_region(image, result, bbox)
 
 
