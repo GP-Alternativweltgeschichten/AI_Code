@@ -48,14 +48,23 @@ def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024), resize
         right = min(right + padding, width)
         lower = min(lower + padding, height)
 
-        def align_down(value, factor=8):
-            return value - (value % factor)
+        cropped_width = right - left
+        cropped_height = lower - upper
 
-        cropped_width = align_down(right - left)
-        cropped_height = align_down(lower - upper)
+        if cropped_width < cropped_height:
+            diff = cropped_height - cropped_width
+            expand_left = diff // 2
+            expand_right = diff - expand_left
 
-        right = left + cropped_width
-        lower = upper + cropped_height
+            left = max(left - expand_left, 0)
+            right = min(right + expand_right, width)
+        elif cropped_height < cropped_width:
+            diff = cropped_width - cropped_height
+            expand_upper = diff // 2
+            expand_lower = diff - expand_upper
+
+            upper = max(upper - expand_upper, 0)
+            lower = min(lower + expand_lower, height)
 
         cropped_image = image.crop((left, upper, right, lower))
         cropped_mask = mask.crop((left, upper, right, lower))
@@ -108,11 +117,8 @@ def inpaint_image_with_custom_model(prompt, image, mask, guidance_scale, modell_
     cropped_image, cropped_mask, bbox = crop_masked_region(image, mask, resize=False)
     converted_mask = convert_mask(cropped_mask, False)
 
-    left, upper, right, lower = bbox
-    width, height = right - left, lower - upper
-
     result = modell_pipe(prompt=prompt, image=cropped_image, mask_image=converted_mask, strength=0.95, guidance_scale=guidance_scale,
-                         num_inference_steps=200, width = width, height = height).images[0]
+                         num_inference_steps=200).images[0]
     return insert_inpainted_region(image, result, bbox)
 
 
