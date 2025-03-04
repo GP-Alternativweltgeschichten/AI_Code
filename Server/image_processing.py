@@ -48,6 +48,15 @@ def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024), resize
         right = min(right + padding, width)
         lower = min(lower + padding, height)
 
+        def align_down(value, factor=8):
+            return value - (value % factor)
+
+        cropped_width = align_down(right - left)
+        cropped_height = align_down(lower - upper)
+
+        right = left + cropped_width
+        lower = upper + cropped_height
+
         cropped_image = image.crop((left, upper, right, lower))
         cropped_mask = mask.crop((left, upper, right, lower))
 
