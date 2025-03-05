@@ -42,20 +42,20 @@ python ./Server/inpaint_REST.py
 Der Server läuft standardmäßig unter http://localhost:8000/
 
 ## 🗺️ Datensatz
-Zum Training von eigenen KI-Modellen wurde ein eigener Datensatz mit 540 Bildern erstellt.
-Dabei wurden Bilder mithilfe von Google Maps und anderen Satelliten-Karten erzeugt und dann beschriftet.
-Es wurden hauptsächlich Bilder aus Olpe und dessen Umgebung verwendet, damit die Bilder der KI-Modelle starke Ähnlichkeiten zur Karte haben.
-Der Datensatz ist auf Huggingface zu finden:
-Satbilder (540 Bilder, beschriftet) - https://huggingface.co/datasets/GP-Alternativweltgeschichten/Satbilder
+Zum Training von eigenen KI-Modellen wurde ein eigener Datensatz mit 540 Bildern erstellt. <br>
+Dabei wurden Bilder mithilfe von Google Maps und anderen Satelliten-Karten erzeugt und dann beschriftet. <br>
+Es wurden hauptsächlich Bilder aus Olpe und dessen Umgebung verwendet, damit die Bilder der KI-Modelle starke Ähnlichkeiten zur Karte haben. <br>
+Der Datensatz ist auf Huggingface zu finden: <br>
+Satbilder (540 Bilder, beschriftet) - https://huggingface.co/datasets/GP-Alternativweltgeschichten/Satbilder <br>
 
 ## 🤖 KI-Modelle
-Im laufe des Projekts wurden mehrere KI-Modelle mithilfe des Satbilder-Datensatzes trainiert.
-Das Training wurde mithilfe des Diffusers Repository (https://github.com/huggingface/diffusers) durchgeführt.
-Eine Anleitung zum Training ist in /Model_Training/model_training.ipynb zu finden.
-Alle Modelle basieren auf dem Stable Diffusion v2-1 Modell (https://huggingface.co/stabilityai/stable-diffusion-2-1).
-Die aktuellen Modelle sind auf Huggingface zu finden:
-OlpeAI (10k Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI
-OlpeAI_Small (700 Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI_Small
+Im laufe des Projekts wurden mehrere KI-Modelle mithilfe des Satbilder-Datensatzes trainiert. <br>
+Das Training wurde mithilfe des Diffusers Repository (https://github.com/huggingface/diffusers) durchgeführt. <br>
+Eine Anleitung zum Training ist in /Model_Training/model_training.ipynb zu finden. <br>
+Alle Modelle basieren auf dem Stable Diffusion v2-1 Modell (https://huggingface.co/stabilityai/stable-diffusion-2-1). <br>
+Die aktuellen Modelle sind auf Huggingface zu finden: <br>
+OlpeAI (10k Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI <br>
+OlpeAI_Small (700 Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI_Small <br>
 
 ## 📂 Projektstruktur
 ```
