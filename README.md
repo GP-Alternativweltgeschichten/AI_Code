@@ -17,6 +17,7 @@ Zunächst wurden Anforderungen an das Modell formuliert, die wie folgt lauten:
 - Fähigkeit zur Generierung von Satellitenbildern
 - Eignung für den lokalen Einsatz auf einem Computer
 - Trainierbarkeit durch den Nutzer
+  
 Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
 In der Folge wurde eine Suche nach im Internet verfügbaren Modellen initiiert, die den genannten Anforderungen entsprechen.
 Primär wurden dazu Modelle mithilfe von Automatic1111 getestet. 
