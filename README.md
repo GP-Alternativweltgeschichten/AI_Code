@@ -11,6 +11,23 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [KI-Modelle](#ki-modelle)
 - [Projektstruktur](#projektstruktur)
 
+## Vorgehen 🛫
+Zunächst wurden Anforderungen an das Modell formuliert, die wie folgt lauten:
+- kostenfrei
+- Fähigkeit zur Generierung von Satellitenbildern
+- Eignung für den lokalen Einsatz auf einem Computer
+- Trainierbarkeit durch den Nutzer
+Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
+In der Folge wurde eine Suche nach im Internet verfügbaren Modellen initiiert, die den genannten Anforderungen entsprechen.
+Primär wurden dazu Modelle mithilfe von Automatic1111 getestet. 
+Dabei wurde erstmals evaluiert, inwiefern diese Modelle zur Generierung von Satellitenbildern befähigt sind.
+Die Modelle selbst wurden von verschiedenen Websites wie CivitAI und HuggingFace bezogen.
+Modelle, die bereits in ihrer Basisvariante adäquate Satellitenbilder produzieren konnten, wurden anschließend auf ihre Fähigkeit zum Inpaint-Verfahren untersucht. 
+Durch dieses Vorgehen konnte die Anzahl der Modelle auf eine überschaubare Anzahl reduziert werden.
+Der entscheidende Schritt bestand darin zu untersuchen, ob diese Modelle durch weitere Training in der Lage sind, spezifische Bilder für Olpe zu erstellen.
+Die Mehrzahl der Modelle scheiterte an dieser Herausforderung, sei es aufgrund von zu hohen Rechenanforderungen, der Beschränkung auf lokale Trainingsmöglichkeiten oder der Komplexität der Anforderungen.
+Schlussendlich wurde das StableDiffusion 2.1-Modell selektiert, dessen Eigenschaften im Abschnitt //TODO dargelegt werden.
+
 ## ⚙️ Installation
 1. Installieren Sie eine Python-Entwicklungsumgebung und ein Tool zum Verwalten von Python-Umgebungen (Theoretisch optional, aber sehr hilfreich). <br>
    In diesem Projekt wurde hauptsächlich Pycharm (https://www.jetbrains.com/de-de/pycharm/) und Anaconda (https://www.anaconda.com/download) verwendet.
