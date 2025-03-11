@@ -11,6 +11,7 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [KI-Modelle](#-ki-modelle)
 - [Installation](#%EF%B8%8F-installation)
 - [Ausblick](#-ausblick)
+- [Verworfene Features](#-verworfene-features)
 - [Projektstruktur](#-projektstruktur)
 
 
@@ -110,7 +111,7 @@ Darüber hinaus sollte, unter Beibehaltung der Topografie, eine Integration der 
 Für die Zukunft sehen wir auch die Möglichkeit, andere Modelle als LORAS zu verwenden, um die Stadt in verschiedenen Stilen wie Mittelalter, Japanisch, Wilder Westen usw. darzustellen.
 Es ist jedoch darauf hinzuweisen, dass auch ein gänzlich divergierendes Vorgehen in der Zukunft nicht ausgeschlossen werden kann. Es existieren bereits ähnliche Projekte, wie das von Nvidia ([Nvidia Canvas](https://support.nvidia.eu/hc/de/articles/360017442939-NVIDIA-CANVAS)), die demonstrieren, dass die zugrunde liegende Problemstellung nicht ausschließlich durch die vorgeschlagene Lösung gelöst werden kann. Sollte sich für ein alternatives Vorgehen entschieden werden, wäre eine entsprechende Anpassung des Modells erforderlich.
 
-## Verworfene Features 🚮
+## 🚮 Verworfene Features 
 Die Mehrzahl der Features, die im Rahmen des Projektes konzipiert wurden, wurde in der vorliegenden Form realisiert. Dies ist auf die Tatsache zurückzuführen, dass sich die Projektgruppe bei der Entwicklung des KI-Modells nicht mit utopischen Zielen und Features befasst hat. 
 Einige wenige Features wurden jedoch verworfen.
 Ein Beispiel ist die Möglichkeit, die Text-to-Image-Funktion des Modells zu nutzen.
