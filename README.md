@@ -12,11 +12,7 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [Projektstruktur](#projektstruktur)
 
 ## Vorgehen 🛫
-Zunächst wurden Anforderungen an das Modell formuliert, die wie folgt lauten:
-- kostenfrei
-- Fähigkeit zur Generierung von Satellitenbildern
-- Eignung für den lokalen Einsatz auf einem Computer
-- Trainierbarkeit durch den Nutzer
+Zunächst wurden Anforderungen an das Modell formuliert, zu finden sind diese unter [Auswahl des KI-Modells](#🎯 Auswahl des KI-Modells)
   
 Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
 In der Folge wurde eine Suche nach im Internet verfügbaren Modellen initiiert, die den genannten Anforderungen entsprechen.
