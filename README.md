@@ -26,7 +26,7 @@ Die Modelle selbst wurden von verschiedenen Websites wie CivitAI und HuggingFace
 Modelle, die bereits in ihrer Basisvariante adäquate Satellitenbilder produzieren konnten, wurden anschließend auf ihre Fähigkeit zum Inpaint-Verfahren untersucht. 
 Durch dieses Vorgehen konnte die Anzahl der Modelle auf eine überschaubare Anzahl reduziert werden.
 Der entscheidende Schritt bestand darin zu untersuchen, ob diese Modelle durch weitere Training in der Lage sind, spezifische Bilder für Olpe zu erstellen.
-Die Mehrzahl der Modelle scheiterte an dieser Herausforderung, sei es aufgrund von zu hohen Rechenanforderungen, der Beschränkung auf lokale Trainingsmöglichkeiten oder der Komplexität der Anforderungen.
+Die Mehrzahl der Modelle scheiterte an dieser Herausforderung, sei es aufgrund von zu hohen Rechenanforderungen oder der Komplexität der Anforderungen.
 Schlussendlich wurde das StableDiffusion 2.1-Modell selektiert, dessen Eigenschaften im Abschnitt //TODO dargelegt werden.
 
 ## ⚙️ Installation
