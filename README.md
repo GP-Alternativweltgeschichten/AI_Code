@@ -9,7 +9,7 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [Auswahl des KI-Modells](#-auswahl-des-ki-modells)
 - [Datensatz](#%EF%B8%8F-datensatz)
 - [KI-Modelle](#-ki-modelle)
-- [Installation](#-installation)
+- [Installation](#%EF%B8%8F-installation)
 - [Ausblick](#-ausblick)
 - [Projektstruktur](#-projektstruktur)
 
