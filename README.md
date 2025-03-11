@@ -20,9 +20,9 @@ Zunächst wurden Anforderungen an das Modell formuliert, die wie folgt lauten:
   
 Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
 In der Folge wurde eine Suche nach im Internet verfügbaren Modellen initiiert, die den genannten Anforderungen entsprechen.
-Primär wurden dazu Modelle mithilfe von [Automatic1111](https://civitai.com/) getestet. 
+Primär wurden dazu Modelle mithilfe von [Automatic1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) getestet. 
 Dabei wurde erstmals evaluiert, inwiefern diese Modelle zur Generierung von Satellitenbildern befähigt sind.
-Die Modelle selbst wurden von verschiedenen Websites wie CivitAI und HuggingFace bezogen.
+Die Modelle selbst wurden von verschiedenen Websites wie [CivitAI](https://civitai.com/) und [HuggingFace](https://huggingface.co/) bezogen.
 Modelle, die bereits in ihrer Basisvariante adäquate Satellitenbilder produzieren konnten, wurden anschließend auf ihre Fähigkeit zum Inpaint-Verfahren untersucht. 
 Durch dieses Vorgehen konnte die Anzahl der Modelle auf eine überschaubare Anzahl reduziert werden.
 Der entscheidende Schritt bestand darin zu untersuchen, ob diese Modelle durch weitere Training in der Lage sind, spezifische Bilder für Olpe zu erstellen.
