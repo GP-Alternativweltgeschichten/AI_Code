@@ -54,6 +54,21 @@ Als Grundlage wurde das Stable Diffusion v2-1 Modell [TODO: Link] von StabilityA
 Das trainierte Modell konnte abschließend lokal mithilfe der Diffuser-Bibliothek geladen werden.
 Das Modell kann in verschiedenen "Pipelines" verwendet werden, welche je nach Auswahl Text to Image, Inpaint oder weitere Aufgaben ausführen können.
 
+## 🗺️ Datensatz
+Zum Training von eigenen KI-Modellen wurde ein eigener Datensatz mit 540 Bildern erstellt. <br>
+Dabei wurden Bilder mithilfe von Google Maps und anderen Satelliten-Karten erzeugt und dann beschriftet. <br>
+Es wurden hauptsächlich Bilder aus Olpe und dessen Umgebung verwendet, damit die Bilder der KI-Modelle starke Ähnlichkeiten zur Karte haben. <br>
+Der Datensatz ist auf Huggingface zu finden: <br>
+Satbilder (540 Bilder, beschriftet) - https://huggingface.co/datasets/GP-Alternativweltgeschichten/Satbilder <br>
+
+## 🤖 KI-Modelle
+Im laufe des Projekts wurden mehrere KI-Modelle mithilfe des Satbilder-Datensatzes trainiert. <br>
+Das Training wurde mithilfe des Diffusers Repository (https://github.com/huggingface/diffusers) durchgeführt. <br>
+Eine Anleitung zum Training ist in /Model_Training/model_training.ipynb zu finden. <br>
+Alle Modelle basieren auf dem Stable Diffusion v2-1 Modell (https://huggingface.co/stabilityai/stable-diffusion-2-1). <br>
+Die aktuellen Modelle sind auf Huggingface zu finden: <br>
+OlpeAI (10k Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI <br>
+OlpeAI_Small (700 Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI_Small <br>
 
 ## ⚙️ Installation
 1. Installieren Sie eine Python-Entwicklungsumgebung und ein Tool zum Verwalten von Python-Umgebungen (Theoretisch optional, aber sehr hilfreich). <br>
@@ -85,21 +100,12 @@ python ./Server/inpaint_REST.py
 ```
 Der Server läuft standardmäßig unter http://localhost:8000/
 
-## 🗺️ Datensatz
-Zum Training von eigenen KI-Modellen wurde ein eigener Datensatz mit 540 Bildern erstellt. <br>
-Dabei wurden Bilder mithilfe von Google Maps und anderen Satelliten-Karten erzeugt und dann beschriftet. <br>
-Es wurden hauptsächlich Bilder aus Olpe und dessen Umgebung verwendet, damit die Bilder der KI-Modelle starke Ähnlichkeiten zur Karte haben. <br>
-Der Datensatz ist auf Huggingface zu finden: <br>
-Satbilder (540 Bilder, beschriftet) - https://huggingface.co/datasets/GP-Alternativweltgeschichten/Satbilder <br>
-
-## 🤖 KI-Modelle
-Im laufe des Projekts wurden mehrere KI-Modelle mithilfe des Satbilder-Datensatzes trainiert. <br>
-Das Training wurde mithilfe des Diffusers Repository (https://github.com/huggingface/diffusers) durchgeführt. <br>
-Eine Anleitung zum Training ist in /Model_Training/model_training.ipynb zu finden. <br>
-Alle Modelle basieren auf dem Stable Diffusion v2-1 Modell (https://huggingface.co/stabilityai/stable-diffusion-2-1). <br>
-Die aktuellen Modelle sind auf Huggingface zu finden: <br>
-OlpeAI (10k Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI <br>
-OlpeAI_Small (700 Schritte) - https://huggingface.co/GP-Alternativweltgeschichten/OlpeAI_Small <br>
+## Ausblick 🔭
+Nach umfassender Analyse und Evaluation wurde festgestellt, dass das KI-Modell in seiner gegenwärtigen Konfiguration noch nicht die gewünschte Trainingsreife aufweist. Für die Zukunft ist demnach die weitere Optimierung des Modells auf Basis einer größeren Anzahl noch detaillierter beschrifteter Bilder vorgesehen.
+Darüber hinaus ist die Verwendung eines alternativen Modells für die gleiche Aufgabe eine mögliche zukünftige Entwicklung, sollte sich dieses als überlegen erweisen.
+Darüber hinaus sollte, unter Beibehaltung der Topografie, eine Integration der Topografie in das KI-Modell erwogen werden. Dafür müsste das Modell eventuell neu trainiert werden oder gar ein anderes genutzt werden. Die Integration von Flüssen, die den Berg hinabfließen oder Seen, die auf reaktive Weise auf Bergen durch das Modell generiert werden, ist eine vielversprechende Möglichkeit, die durch die Einbindung der Topografie in das KI-Modell realisiert werden könnte. 
+Für die Zukunft sehen wir auch die Möglichkeit, andere Modelle als LORAS zu verwenden, um die Stadt in verschiedenen Stilen wie Mittelalter, Japanisch, Wilder Westen usw. darzustellen.
+Es ist jedoch darauf hinzuweisen, dass auch ein gänzlich divergierendes Vorgehen in der Zukunft nicht ausgeschlossen werden kann. Es existieren bereits ähnliche Projekte, wie das von Nvidia ([Nvidia Canvas](https://support.nvidia.eu/hc/de/articles/360017442939-NVIDIA-CANVAS)), die demonstrieren, dass die zugrunde liegende Problemstellung nicht ausschließlich durch die vorgeschlagene Lösung gelöst werden kann. Sollte sich für ein alternatives Vorgehen entschieden werden, wäre eine entsprechende Anpassung des Modells erforderlich.
 
 ## Verworfene Features 🚮
 Die Mehrzahl der Features, die im Rahmen des Projektes konzipiert wurden, wurde in der vorliegenden Form realisiert. Dies ist auf die Tatsache zurückzuführen, dass sich die Projektgruppe bei der Entwicklung des KI-Modells nicht mit utopischen Zielen und Features befasst hat. 
@@ -108,13 +114,6 @@ Ein Beispiel ist die Möglichkeit, die Text-to-Image-Funktion des Modells zu nut
 Diese wurde zunächst implementiert, dann jedoch durch die Inpaint-Funktion ersetzt. Dieser Schritt wurde unternommen, da die Notwendigkeit bzw. der Nutzen dieser Funktion für die Gäste nicht länger als gegeben angesehen wurde. Sollte eine Revision dieses Vorgehens in Betracht gezogen werden, wäre eine erneute Implementierung dieses Features eine mögliche Konsequenz.
 Zudem wurde zu Projektbeginn die Idee diskutiert, die Karte in einer 3D-Ansicht zu präsentieren, in der das Modell darauf trainiert werden oder ein anderes Modell benötigt werden würde. Diese Idee wurde jedoch aus Gründen der Projektgröße verworfen.Darüber hinaus wurden weitere kleinere Features, die ähnliche Gründe wie Text-to-Image aufwiesen, entfernt.
 Auch die Idee, die Stadt mit Hilfe von KI in verschiedenen Stilen wie Mittelalter oder wilder Westen zu gestalten, wurde zunächst zurückgestellt und aus Zeitgründen erstmals in den Ausblick für die zukünftige Entwicklung aufgenommen.
-
-## Ausblick 🔭
-Nach umfassender Analyse und Evaluation wurde festgestellt, dass das KI-Modell in seiner gegenwärtigen Konfiguration noch nicht die gewünschte Trainingsreife aufweist. Für die Zukunft ist demnach die weitere Optimierung des Modells auf Basis einer größeren Anzahl noch detaillierter beschrifteter Bilder vorgesehen.
-Darüber hinaus ist die Verwendung eines alternativen Modells für die gleiche Aufgabe eine mögliche zukünftige Entwicklung, sollte sich dieses als überlegen erweisen.
-Darüber hinaus sollte, unter Beibehaltung der Topografie, eine Integration der Topografie in das KI-Modell erwogen werden. Dafür müsste das Modell eventuell neu trainiert werden oder gar ein anderes genutzt werden. Die Integration von Flüssen, die den Berg hinabfließen oder Seen, die auf reaktive Weise auf Bergen durch das Modell generiert werden, ist eine vielversprechende Möglichkeit, die durch die Einbindung der Topografie in das KI-Modell realisiert werden könnte. 
-Für die Zukunft sehen wir auch die Möglichkeit, andere Modelle als LORAS zu verwenden, um die Stadt in verschiedenen Stilen wie Mittelalter, Japanisch, Wilder Westen usw. darzustellen.
-Es ist jedoch darauf hinzuweisen, dass auch ein gänzlich divergierendes Vorgehen in der Zukunft nicht ausgeschlossen werden kann. Es existieren bereits ähnliche Projekte, wie das von Nvidia ([Nvidia Canvas](https://support.nvidia.eu/hc/de/articles/360017442939-NVIDIA-CANVAS)), die demonstrieren, dass die zugrunde liegende Problemstellung nicht ausschließlich durch die vorgeschlagene Lösung gelöst werden kann. Sollte sich für ein alternatives Vorgehen entschieden werden, wäre eine entsprechende Anpassung des Modells erforderlich.
 
 ## 📂 Projektstruktur
 ```
