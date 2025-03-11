@@ -29,6 +29,36 @@ Der entscheidende Schritt bestand darin zu untersuchen, ob diese Modelle durch w
 Die Mehrzahl der Modelle scheiterte an dieser Herausforderung, sei es aufgrund von zu hohen Rechenanforderungen oder der Komplexität der Anforderungen.
 Schlussendlich wurde das StableDiffusion 2.1-Modell selektiert, dessen Eigenschaften im Abschnitt //TODO dargelegt werden.
 
+## 🎯 Auswahl des KI-Modells
+Basierend auf einer ersten Literaturrecherche wurden folgende Herausforderungen bei der Erstellung eines KI-Modells identifiziert:
+- Keine Open Source Modelle, die Satellitenbilder erstellen können 
+- Keine/wenige Datensätze verfügbar, die Satellitenbilder enthalten 
+- Keine/wenige Datensätze verfügbar, die dem Stadtbild von Olpe entsprechen 
+- Teilweise sehr aufwendige Schritte zum Trainieren der Modelle 
+- Segmentierung der Satellitenbilder sehr aufwendig, da viele kleine Objekte vorhanden sind 
+- Teilweise keine Unterstützung von InPaint, nur Text to Image 
+
+Bezüglich der Herausforderungen musste im Laufe des Projektes ein ideales KI-Modell für unseren Anwendungsfall definiert werden.
+Die folgenden Anforderungen wurden definiert:
+- Open Source, kostenlos 
+- Kann Satellitenbilder generieren 
+- Kann lokal auf einem Rechner laufen 
+- Kann von uns trainiert werden 
+- Ist spezialisiert auf das Erscheinungsbild der Stadt Olpe 
+- Die Erstellung eines Datensatzes und das Training sind mit angemessenem Aufwand möglich
+- Unterstützt InPaint 
+
+Nach einer Reihe von Tests und zusätzlicher Recherche wurde schließlich ein Stable Diffusion-Modell eingesetzt.
+Die zuvor genannten Punkte konnten mithilfe der Diffusers-Bibliothek, die auf der Diffusers-Link-Bibliothek basiert, realisiert werden.
+Die Diffusers-Bibliothek repräsentiert den aktuellen Stand der Technik, ist Open-Source und bietet auch vortrainierte Modelle als Grundlage.
+Dies erlaubt das Erstellen eines Datensatzes durch die Beschreibung von Bildern, anstatt durch aufwendiges Segmentieren.
+Darüber hinaus ist das (Weiter-)Trainieren eines Modells einfach möglich.
+Die Verwendung und das Weitertrainieren von vorab erstellten Modellen ermöglichte es, die Akkuratheit der Abbildung des Stadtbildes von Olpe zu gewährleisten und zudem die Umsetzung kreativerer Anfragen zu ermöglichen.
+Als Grundlage wurde das Stable Diffusion v2-1 Modell [TODO: Link] von StabilityAI ausgewählt, welches eine umfangreiche Bilddatenbank enthält.
+Das trainierte Modell konnte abschließend lokal mithilfe der Diffuser-Bibliothek geladen werden.
+Das Modell kann in verschiedenen "Pipelines" verwendet werden, welche je nach Auswahl Text to Image, Inpaint oder weitere Aufgaben ausführen können.
+
+
 ## ⚙️ Installation
 1. Installieren Sie eine Python-Entwicklungsumgebung und ein Tool zum Verwalten von Python-Umgebungen (Theoretisch optional, aber sehr hilfreich). <br>
    In diesem Projekt wurde hauptsächlich Pycharm (https://www.jetbrains.com/de-de/pycharm/) und Anaconda (https://www.anaconda.com/download) verwendet.
