@@ -12,7 +12,7 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [KI-Modelle](#ki-modelle)
 - [Projektstruktur](#projektstruktur)
 
-##🛫 Vorgehen
+## 🛫 Vorgehen
 Zunächst wurden Anforderungen an das Modell formuliert, zu finden sind diese unter [Auswahl des KI-Modells](#-auswahl-des-ki-modells).
   
 Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
