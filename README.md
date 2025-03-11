@@ -5,14 +5,14 @@ Dieser Code wurde entwickelt, um den Museumsbesuchern die Möglichkeit zu geben,
 Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Serververbindung mit dem Backend, zum Verarbeiten von Prompts, und ein Skript zum Testen des Servers direkt mit Python.
 
 ## 📖 Inhalt
--[Vorgehen](#vorgehen)
+- [Vorgehen](#-vorgehen)
 - [Installation](#installation)
 - [Anwendung ausführen](#anwendung-ausführen)
 - [Datensatz](#datensatz)
 - [KI-Modelle](#ki-modelle)
 - [Projektstruktur](#projektstruktur)
 
-## Vorgehen 🛫
+##🛫 Vorgehen
 Zunächst wurden Anforderungen an das Modell formuliert, zu finden sind diese unter [Auswahl des KI-Modells](#-auswahl-des-ki-modells).
   
 Die Anforderungen resultieren aus einer gemeinsamen Diskussion über das Modell und dessen Funktionalitäten sowie aus den Requirements.
