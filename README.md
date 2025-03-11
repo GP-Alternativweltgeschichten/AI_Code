@@ -103,7 +103,7 @@ python ./Server/inpaint_REST.py
 ```
 Der Server läuft standardmäßig unter http://localhost:8000/
 
-## Ausblick 🔭
+## 🔭 Ausblick
 Nach umfassender Analyse und Evaluation wurde festgestellt, dass das KI-Modell in seiner gegenwärtigen Konfiguration noch nicht die gewünschte Trainingsreife aufweist. Für die Zukunft ist demnach die weitere Optimierung des Modells auf Basis einer größeren Anzahl noch detaillierter beschrifteter Bilder vorgesehen.
 Darüber hinaus ist die Verwendung eines alternativen Modells für die gleiche Aufgabe eine mögliche zukünftige Entwicklung, sollte sich dieses als überlegen erweisen.
 Darüber hinaus sollte, unter Beibehaltung der Topografie, eine Integration der Topografie in das KI-Modell erwogen werden. Dafür müsste das Modell eventuell neu trainiert werden oder gar ein anderes genutzt werden. Die Integration von Flüssen, die den Berg hinabfließen oder Seen, die auf reaktive Weise auf Bergen durch das Modell generiert werden, ist eine vielversprechende Möglichkeit, die durch die Einbindung der Topografie in das KI-Modell realisiert werden könnte. 
