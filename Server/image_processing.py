@@ -26,7 +26,7 @@ def convert_mask(mask, transparency=True):
                 else:
                     new_mask.putpixel((x, y), (255, 255, 255, 255))  # Weiß (für den Bereich der geändert werden soll)
 
-    new_mask.save("./img/converted_mask.png")
+    #new_mask.save("./img/converted_mask.png")
     return new_mask
 
 
@@ -55,8 +55,8 @@ def crop_masked_region(image, mask, padding=30, target_size=(1024, 1024)):
         resized_image = cropped_image.resize(target_size, Image.LANCZOS)
         resized_mask = cropped_mask.resize(target_size, Image.LANCZOS)
 
-        resized_image.save("./img/cropped_income_image.png")
-        resized_mask.save("./img/cropped_mask.png")
+        #resized_image.save("./img/cropped_income_image.png")
+        #resized_mask.save("./img/cropped_mask.png")
 
         return resized_image, resized_mask, (left, upper, right, lower)
     else:
@@ -81,8 +81,8 @@ def insert_inpainted_region(original_image, result_image, bbox):
     result = original_image.copy()
     result.paste(resized_result, (left, upper))
 
-    result_image.save("./img/cropped_result.png")
-    result.save("./img/result.png")
+    #result_image.save("./img/cropped_result.png")
+    #result.save("./img/result.png")
 
     return result
 
