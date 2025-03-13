@@ -6,7 +6,7 @@ from diffusers import StableDiffusionInpaintPipeline
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 
-from Server.persistence import save_income, save_result
+from persistence import save_income, save_result
 from image_processing import inpaint_image_with_custom_model, inpaint_image_with_dalle
 from prompt_engineering import get_enhanced_prompt
 from request_types import InpaintRequest
@@ -29,7 +29,7 @@ app = FastAPI()
 async def inpaint(
         request: InpaintRequest
 ):
-    timestamp = datetime.now()
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     if request.mask is None or not request.mask.strip():
         # Image to Image
         image = request.get_image_as_rgb()
@@ -51,7 +51,7 @@ async def inpaint(
         else:
             result = inpaint_image_with_dalle(prompt, image, mask)
 
-        save_income(image,mask,prompt,model,timestamp)
+        save_income(image,mask,prompt,model,timestamp,guidance_scale)
         save_result(result,timestamp)
 
         # Ergebnis zurückgeben
