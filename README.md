@@ -92,7 +92,7 @@ OlpeAI_Small (700 Schritte) - https://huggingface.co/GP-Alternativweltgeschichte
 7. Installieren Sie in dem Terminal alle relevanten Python-Bibliotheken. <br>
    Verwenden Sie dazu die Befehle:
    ```sh
-   pip install fastapi uvicorn pydantic diffusers pillow torch requests
+   pip install fastapi uvicorn pydantic diffusers pillow torch requests OpenAI deep_translator transformers
    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
    ```
    Für das Trainieren von KI-Modellen sind zusätzliche Dateien nötig, diese sind in /Model_Training/model_training.ipynb zu finden
@@ -130,7 +130,7 @@ Auch die Idee, die Stadt mit Hilfe von KI in verschiedenen Stilen wie Mittelalte
   /image_processing.py      # Python-Datei mit Funktionen zur Verarbeitung der Bilder und dem Ausführen des Inpaintings
   /inpaint_REST.py          # Python-Datei für den Server
   /prompt_engineering.py    # Python-Datei mit einer Funktion zum Verbessern von Prompts
-  /request_types.py         # Python-Datei, die die Form des Requests festlegt und Funktionen zum Verbeiten dessen bereitstellt.
+  /request_types.py         # Python-Datei, die die Form des Requests festlegt und Funktionen zum Verarbeiten dessen bereitstellt.
 ```
 
 --- 
