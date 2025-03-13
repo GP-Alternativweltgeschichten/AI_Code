@@ -51,7 +51,7 @@ async def inpaint(
         else:
             result = inpaint_image_with_dalle(prompt, image, mask)
 
-        save_income(image,mask,prompt,model,timestamp,guidance_scale)
+        save_income(image,mask,prompt,model,guidance_scale,timestamp)
         save_result(result,timestamp)
 
         # Ergebnis zurückgeben
