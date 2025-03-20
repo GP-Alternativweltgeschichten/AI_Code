@@ -12,7 +12,6 @@ Die Codebasis umfasst Skripte zum Trainieren und Testen eines KI-Modells, zur Se
 - [Voraussetzungen](#%EF%B8%8F-voraussetzungen)
 - [Server ausführen](#-server-ausführen)
 - [Server Funktionalitäten](#-server-funktionalitäten)
-- [KI-Prompting](#-ki-prompting)
 - [KI-Modell trainieren](#-ki-modell-trainieren)
 - [Ausblick](#-ausblick)
 - [Verworfene Features](#-verworfene-features)
@@ -119,10 +118,60 @@ python ./server/inpaint_REST.py
 Der Server läuft standardmäßig unter http://localhost:8000/
 
 ## ✨ Server Funktionalitäten
-Welche Funktionen haben wir? Warum? Reihenfolge der Ausführung? Was kommt rein/Was geht raus? 
+Nachfolgend werden die Funktionen der Server-Anwendung in der Reihenfolge ihrer Ausführung beschrieben und ihre jeweilige Relevanz erläutert.  
 
-## 📝 KI-Prompting
-Parameter? Was müssen wir beachten?
+Die grundlegende Server-Funktionalität befindet sich in `/server/inpaint_REST.py`.
+Hier wird bei Start der Anwendung zunächst ein KI-Modell in eine `StableDiffusionInpaintPipeline` geladen, welche die grundlegenden Inpainting-Funktionen bereitstellt.
+Daraufhin wird mithilfe der [FastAPI](https://github.com/fastapi/fastapi) und [Uvicorn](https://github.com/encode/uvicorn) Bibliotheken eine REST-Schnittstelle für das Backend geladen, welche diesem das Erstellen von Inpaints ermöglicht.
+
+Das Format für die Anfragen des Backends, als auch grundlegende Funktionen zum Verarbeiten des Inhalts dieser Anfragen werden in `/server/request_types.py` festgelegt.
+Zum Lesen des Bildes und der Maske sind die Funktionen `get_image_as_rgb()` und `get_mask_as_rgb()` vorhanden.
+Mit diesen Funktionen wird zunächst ein Präfix von den Bildern entfernt und diese dann mithilfe der [io.BytesIO](https://docs.python.org/3/library/io.html#binary-i-o) und [Pillow](https://github.com/python-pillow/Pillow) Bibliotheken geladen.
+Für die Verarbeitung des Prompts ist zudem die Funktion `get_prepared_prompt()` vorhanden.
+Diese stellt mit der [Deep Translator](https://github.com/nidhaloff/deep-translator) Bibliothek sicher, dass der erhaltene Prompt von Deutsch in Englisch übersetzt wird, damit das KI-Modell diesen versteht.
+Außerdem wird in der Anfrage eine Nummer, die das KI-Modell bestimmt, und eine Texttreue benötigt.
+Die Modellnummer bestimmt, ob ein lokales Modell verwendet wird, oder das Inpainting von [Dall-E 2](https://openai.com/index/dall-e-2/) durchgeführt wird.
+Mithilfe der Texttreue wird bestimmt, wie nah das Modell bei der Bildgeneration am Nutzer-Prompt bleibt.
+
+Stimmt die Anfrage des Backends mit dem genannten Format überein, wird in `/server/inpaint_REST.py` nun zunächst ein Zeitstempel zum späteren Persistieren der Anfragen erstellt.
+Daraufhin wird überprüft, ob die Anfrage eine valide Maske enthält.
+Ist dies nicht der Fall, so wird das Bild, das verändert werden sollte, mit der `send_image_as_png()`-Funktion, ohne Änderungen zurück an das Backend geschickt.
+Ist eine valide Maske vorhanden, werden zunächst alle Daten der Anfrage geladen.
+Daraufhin wird überprüft, welches Modell gewählt wurde.
+Dabei steht `0` für das lokale Modell und `1` für das Dall-E 2 Modell.
+Wird das lokale Modell verwendet, wird zunächst der Prompt übersetzt und dann mithilfe der `get_enhanced_prompt()`-Funktion aus `/server/prompt_engineering.py` verbessert.
+
+In der `get_enhanced_prompt()`-Funktion werden zunächst alle Satzzeichen aus dem Prompt entfernt und die Wörter in Kleinbuchstaben geändert.
+Daraufhin wird für jedes Wort überprüft, ob dieses in einem angegebenen Prompt-Lexikon vorkommt.
+Ist dies der Fall, so wird für jedes dieser Worte ein bestimmter (komplexerer/kreativerer) Begriff zum originalen Prompt hinzugefügt, um das Ergebnis der Bildgenerierung zu verbessern.
+Im finalen Stand des Projekts sind in dem Prompt-Lexikon nur Übersetzungen von wichtigen Begriffen vorhanden, falls die automatische Übersetzung fehlschlägt, da das finale Modell auch mit simplem Prompts gut zurecht kommt.
+Das tatsächliche Verbessern der Prompts kann jedoch durch neue Einträge im Prompt-Lexikon wieder hinzugefügt werden.
+
+Nach der Verbesserung des Prompts wird beim lokalen Modell schließlich das Inpainting mit den gegebenen Parametern in der Funktion `inpaint_image_with_custom_model()` aus `/server/image_processing.py` gestartet.
+Dabei werden zunächst das Bild und die Maske mit der `crop_masked_region()`-Funktion auf eine gegebene Größe (hier: 768x768 Pixel) zugeschnitten, damit das Modell diese verarbeiten kann.
+Dabei wird sichergestellt, dass nicht nur der vom Nutzer markierte Bereich weitergegeben wird, sondern auch ein kleiner Bereich außerhalb der Markierung, damit die Übergänge zu den nicht veränderten Bereichen akkurater sind.
+Daraufhin wird mit der `convert_mask()`-Funktion die Maske für das Modell so angepasst, dass Bereiche, die verändert werden sollen, transparent (oder weiß) sind und Bereiche, die nicht verändert werden sollen weiß.
+Schließlich wird das tatsächliche Inpainting mit dem Modell durchgeführt.
+Hierbei werden die übergebenen Parameter verwendet und zudem die Stärke und die Anzahl an Inferenz-Schritten angegeben.
+Die Stärke und Inferenz-Schritte wurden nach mehreren Tests auf einen passenden Wert festgelegt und beeinflussen, wie stark sich das originale Bilder verändert.
+Diese Parameter sind nicht vom Nutzer einzugeben, da mit den festen Werten gute Ergebnisse entstehen und weitere Parameter die Nutzer verwirren könnte.
+Nachdem das Bild generiert wurde, wird dieses mithilfe der `insert_inpainted_region()`-Funktion wieder auf die originale Größe skaliert und schließlich zurückgegeben.
+Damit ist das Inpainting mit dem lokalen Modell abgeschlossen.
+
+Wird das Dall-E 2 Modell gewählt, so wird die `inpaint_image_with_dalle()`-Funktion verwendet.
+In dieser wird zunächst ein OpenAI-Client mithilfe der [OpenAI](https://github.com/openai/openai-python) Bibliothek erstellt.
+Daraufhin wird das Bild und die Maske, wie beim lokalen Modell, mit der `crop_masked_region()` und `convert_mask()` angepasst.
+Dann werden diese temporär für den Client gespeichert mit der `save_temp_image()`-Funktion.
+Nun werden einige grundlegende Parameter für die Anfrage an das Modell festgelegt.
+Mithilfe der temporär gespeicherten Bilder und den Parametern wird dann die Anfrage an das Modell gesendet.
+Wird ein valides Ergebnis zurückgeliefert, so werden die temporären Bilder gelöscht, das generierte Bild aus der Antwort extrahiert, und schließlich das Bild wieder mit der `insert_inpainted_region()`-Funktion skaliert und zurückgegeben.
+
+Nach der Bildgenerierung von einem der Modelle, werden die Anfrage und das Ergebnis mit den Funktionen `save_income()` und `save_result()` aus `/server/persistence.py` persistiert.
+Für die Anfrage wird das grundlegende Bild und die Maske mit Zeitstempel in `/persistence/img/input/`, und der Prompt mit dem gewählten Modell, der Texttreue und Zeitstempel in `/persistence/prompt/prompts.txt` gespeichert.
+Für die Ergebnisse wird nur das generierte Bild mit Zeitstempel in `/persistence/img/result/` gespeichert.
+
+Zum Abschluss wird das Ergebnis des jeweiligen Modells mit der `send_image_as_png()`-Funktion an das Backend zurückgesendet.
+
 
 ## 📥 KI-Modell trainieren
 1. Erfüllen Sie zunächst die [Voraussetzungen](#-voraussetzungen).
