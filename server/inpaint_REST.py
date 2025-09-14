@@ -5,11 +5,14 @@ import torch
 from diffusers import StableDiffusionInpaintPipeline
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+from openai import OpenAI
 
 from persistence import save_income, save_result
 from image_processing import inpaint_image_with_custom_model, inpaint_image_with_dalle
 from prompt_engineering import get_enhanced_prompt
-from request_types import InpaintRequest
+from request_types import InpaintRequest, ChatMessageRequest
+from server.chatBot_interaction_interface import get_initial_prompting_text, add_mask_outline_to_image, \
+    get_image_as_base64
 
 # Modell einmalig laden
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -23,6 +26,28 @@ pipe_inpaint = pipe_inpaint.to(device)
 
 # Initialisiere die API
 app = FastAPI()
+
+# chatbot variablen
+conversations = {}
+initalChatbotPrompting = get_initial_prompting_text()
+
+client = OpenAI()
+
+@app.post("/aiChat")
+async def chat_message(
+        request: ChatMessageRequest
+):
+    if request.conversationId not in conversations:
+        conversations[request.conversationId] = [
+            {"role": "system", "content": initalChatbotPrompting}
+        ]
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    if request.mask and request.image:
+        mask = request.get_mask_as_rgb()
+        image = request.get_image_as_rgb()
+        marked_image = add_mask_outline_to_image(image, mask)
+        get_image_as_base64(marked_image)
 
 
 @app.post("/inpainting/")

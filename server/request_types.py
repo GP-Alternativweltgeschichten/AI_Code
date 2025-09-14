@@ -1,5 +1,6 @@
 import base64
 from io import BytesIO
+from typing import Optional
 
 from PIL import Image
 from deep_translator import GoogleTranslator
@@ -34,3 +35,19 @@ class InpaintRequest(BaseModel):
 
 class PromptRequest(BaseModel):
     prompt: str
+
+
+class ChatMessageRequest(BaseModel):
+    text: Optional[str] = None
+    image: Optional[str] = None
+    mask: Optional[str] = None
+    conversationId: str
+
+    def get_image_as_rgb(self):
+        image_data = base64.b64decode(self.image.split(",")[1])
+        return Image.open(BytesIO(image_data)).convert("RGB")
+
+    def get_mask_as_rgb(self):
+        mask_data = base64.b64decode(self.mask.split(",")[1])
+        mask = Image.open(BytesIO(mask_data)).convert("RGBA")
+        return mask
