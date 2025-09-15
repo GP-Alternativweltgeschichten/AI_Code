@@ -6,12 +6,13 @@ from diffusers import StableDiffusionInpaintPipeline
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
+from fastapi.responses import JSONResponse
 
 from persistence import save_income, save_result
 from image_processing import inpaint_image_with_custom_model, inpaint_image_with_dalle
 from prompt_engineering import get_enhanced_prompt
 from request_types import InpaintRequest, ChatMessageRequest
-from server.chatBot_interaction_interface import get_initial_prompting_text, add_mask_outline_to_image, \
+from chatBot_interaction_interface import get_initial_prompting_text, add_mask_outline_to_image, \
     get_image_as_base64
 
 # Modell einmalig laden
@@ -26,29 +27,69 @@ pipe_inpaint = pipe_inpaint.to(device)
 
 # Initialisiere die API
 app = FastAPI()
-
 # chatbot variablen
-conversations = {}
-initalChatbotPrompting = get_initial_prompting_text()
-
+inital_developer_prompting,inital_system_prompting  = get_initial_prompting_text()
 client = OpenAI()
-
-@app.post("/aiChat")
+conversations = []
+@app.post("/text")
 async def chat_message(
         request: ChatMessageRequest
 ):
+
     if request.conversationId not in conversations:
-        conversations[request.conversationId] = [
-            {"role": "system", "content": initalChatbotPrompting}
-        ]
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        chat_conversation=client.conversations.create(
+            items=[
+                {"type": "message",
+                 "role": "system",
+                 "content": [
+                     {"type": "input_text", "text": inital_system_prompting}]
+                 },
+                {"type": "message",
+                 "role": "developer",
+                 "content": [
+                     {"type": "input_text", "text": inital_developer_prompting},]
+                 }
+            ]
+        )
+        conversations.append(chat_conversation.id)
+        request.conversationId=chat_conversation.id
+
+    else:
+        chat_conversation = client.conversations.retrieve(request.conversationId)
 
     if request.mask and request.image:
         mask = request.get_mask_as_rgb()
         image = request.get_image_as_rgb()
         marked_image = add_mask_outline_to_image(image, mask)
-        get_image_as_base64(marked_image)
+        formated_image = get_image_as_base64(marked_image)
+        response = client.responses.create(
+            conversation=chat_conversation.id,
+            model="gpt-4.1-mini",
+            input=[{
+                "role": "user",
+                "content": [
+                    {"type": "input_text",
+                     "text": "benutze diesen Markierten Bereich als (neunen) Kontext für die conversation"},
+                    {"type": "input_image",
+                     "image_url": f"data:image/png;base64,{formated_image}"},
+                ]
+            }]
+        )
+        print(response.output_text)
 
+    if request.text and request.conversationId:
+        response = client.responses.create(
+            conversation=chat_conversation.id,
+            model="gpt-4.1-mini",
+                input = [{
+        "role": "user",
+        "content": [
+            {"type": "input_text", "text": request.text},
+        ]
+    }]
+        )
+    print(response.output_text)
+    return JSONResponse({"response_text":response.output_text, "conversationId":chat_conversation.id})
 
 @app.post("/inpainting/")
 async def inpaint(
