@@ -57,7 +57,7 @@ async def chat_message(
     else:
         chat_conversation = client.conversations.retrieve(request.conversationId)
 
-    if request.mask and request.image:
+    if request.mask and request.image :
         mask = request.get_mask_as_rgb()
         image = request.get_image_as_rgb()
         marked_image = add_mask_outline_to_image(image, mask)
@@ -76,8 +76,9 @@ async def chat_message(
             }]
         )
         print(response.output_text)
+        return JSONResponse({"response_text": response.output_text, "conversationId": chat_conversation.id})
 
-    if request.text and request.conversationId:
+    if request.text and request.conversationId :
         response = client.responses.create(
             conversation=chat_conversation.id,
             model="gpt-4.1-mini",
