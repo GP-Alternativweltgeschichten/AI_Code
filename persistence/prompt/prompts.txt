@@ -1,1 +1,0 @@
-timestamp:20250914235620, prompt:baum, model:1, guidance_scale:7
