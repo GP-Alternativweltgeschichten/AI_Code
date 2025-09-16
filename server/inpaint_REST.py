@@ -6,7 +6,6 @@ from diffusers import StableDiffusionInpaintPipeline
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
-from fastapi.responses import JSONResponse
 from starlette.responses import PlainTextResponse
 
 from persistence import save_income, save_result
@@ -36,7 +35,9 @@ conversations = []
 async def chat_message(
         request: ChatMessageRequest
 ):
+    print("request")
     print(request.text)
+    print(request.conversationId)
     if request.conversationId not in conversations:
         chat_conversation=client.conversations.create(
             items=[
@@ -52,11 +53,12 @@ async def chat_message(
                  }
             ]
         )
-        conversations[request.conversationId]=chat_conversation.id
+
+        conversations.insert(request.conversationId,chat_conversation.id)
         currentConversationId=chat_conversation.id
     else:
         chat_conversation = client.conversations.retrieve(request.conversationId)
-
+    response=None
     if request.mask and request.image :
         mask = request.get_mask_as_rgb()
         image = request.get_image_as_rgb()
@@ -77,21 +79,24 @@ async def chat_message(
         )
         print(response.output_text)
         return PlainTextResponse(response.output_text)
-
-    if request.text and request.conversationId :
+    if request.text is not None and request.conversationId is not None :
         response = client.responses.create(
             conversation=currentConversationId,
             model="gpt-4.1-mini",
-                input = [{
-        "role": "user",
-        "content": [
-            {"type": "input_text", "text": request.text},
-        ]
-    }]
+            input = [{
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": request.text},
+                ]
+            }]
         )
-    print(response.output_text)
-    return PlainTextResponse(response.output_text)
-
+        print("****System Output in text to Chat:****")
+        print(response.output_text)
+        print("**************************************")
+        return PlainTextResponse(response.output_text)
+    else:
+        print("Wrong input")
+        return PlainTextResponse("wrong input")
 @app.post("/inpainting/")
 async def inpaint(
         request: InpaintRequest
