@@ -41,7 +41,7 @@ class ChatMessageRequest(BaseModel):
     text: Optional[str] = None
     image: Optional[str] = None
     mask: Optional[str] = None
-    conversationId: Optional[str]= None
+    conversationId: Optional[int]= None
 
     def get_image_as_rgb(self):
         image_data = base64.b64decode(self.image.split(",")[1])

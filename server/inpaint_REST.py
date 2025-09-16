@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
 from fastapi.responses import JSONResponse
+from starlette.responses import PlainTextResponse
 
 from persistence import save_income, save_result
 from image_processing import inpaint_image_with_custom_model, inpaint_image_with_dalle
@@ -35,7 +36,7 @@ conversations = []
 async def chat_message(
         request: ChatMessageRequest
 ):
-
+    print(request.text)
     if request.conversationId not in conversations:
         chat_conversation=client.conversations.create(
             items=[
@@ -51,9 +52,8 @@ async def chat_message(
                  }
             ]
         )
-        conversations.append(chat_conversation.id)
-        request.conversationId=chat_conversation.id
-
+        conversations[request.conversationId]=chat_conversation.id
+        currentConversationId=chat_conversation.id
     else:
         chat_conversation = client.conversations.retrieve(request.conversationId)
 
@@ -63,7 +63,7 @@ async def chat_message(
         marked_image = add_mask_outline_to_image(image, mask)
         formated_image = get_image_as_base64(marked_image)
         response = client.responses.create(
-            conversation=chat_conversation.id,
+            conversation=currentConversationId,
             model="gpt-4.1-mini",
             input=[{
                 "role": "user",
@@ -76,11 +76,11 @@ async def chat_message(
             }]
         )
         print(response.output_text)
-        return JSONResponse({"response_text": response.output_text, "conversationId": chat_conversation.id})
+        return PlainTextResponse(response.output_text)
 
     if request.text and request.conversationId :
         response = client.responses.create(
-            conversation=chat_conversation.id,
+            conversation=currentConversationId,
             model="gpt-4.1-mini",
                 input = [{
         "role": "user",
@@ -90,7 +90,7 @@ async def chat_message(
     }]
         )
     print(response.output_text)
-    return JSONResponse({"response_text":response.output_text, "conversationId":chat_conversation.id})
+    return PlainTextResponse(response.output_text)
 
 @app.post("/inpainting/")
 async def inpaint(
