@@ -1,0 +1,5 @@
+timestamp:20250918014637, prompt:., model:0, guidance_scale:7
+timestamp:20250918014930, prompt:., model:0, guidance_scale:7
+timestamp:20250918015515, prompt:., model:0, guidance_scale:7
+timestamp:20250918020047, prompt:, model:1, guidance_scale:7
+timestamp:20250918020556, prompt:satellite view of a kart racing track, winding race circuit with sharp and smooth curves, paved track surface, surrounded by green spaces and small buildings for facilities, high detail, realistic satellite image style, model:1, guidance_scale:7

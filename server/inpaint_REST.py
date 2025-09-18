@@ -30,15 +30,20 @@ app = FastAPI()
 # chatbot variablen
 inital_developer_prompting,inital_system_prompting  = get_initial_prompting_text()
 client = OpenAI()
-conversations = []
+conversations = {}
 @app.post("/text")
 async def chat_message(
         request: ChatMessageRequest
 ):
+    chat_conversation=""
     print("request")
     print(request.text)
     print(request.conversationId)
-    if request.conversationId not in conversations:
+
+    if conversations.get(str(request.conversationId)) is None:
+        print("new conversation")
+        print(request.conversationId)
+        print(conversations)
         chat_conversation=client.conversations.create(
             items=[
                 {"type": "message",
@@ -54,16 +59,22 @@ async def chat_message(
             ]
         )
 
-        conversations.insert(request.conversationId,chat_conversation.id)
+        conversations[str(request.conversationId)]=chat_conversation.id
         currentConversationId=chat_conversation.id
     else:
-        chat_conversation = client.conversations.retrieve(request.conversationId)
+        print("conversation already exists")
+        print(request.conversationId)
+        print(conversations)
+        currentConversationId = client.conversations.retrieve(conversations[str(request.conversationId)]).id
     response=None
     if request.mask and request.image :
         mask = request.get_mask_as_rgb()
         image = request.get_image_as_rgb()
         marked_image = add_mask_outline_to_image(image, mask)
         formated_image = get_image_as_base64(marked_image)
+        print("**** base64 formated image ****")
+        print(formated_image)
+        print("**** base64 formated image ****")
         response = client.responses.create(
             conversation=currentConversationId,
             model="gpt-4.1-mini",
@@ -77,9 +88,15 @@ async def chat_message(
                 ]
             }]
         )
+        print("****System Output in text to Chat:****")
         print(response.output_text)
+        print("Chatbot:")
+        print(currentConversationId)
+        print("**************************************")
         return PlainTextResponse(response.output_text)
     if request.text is not None and request.conversationId is not None :
+        print(currentConversationId)
+        print(request.text)
         response = client.responses.create(
             conversation=currentConversationId,
             model="gpt-4.1-mini",
@@ -92,6 +109,8 @@ async def chat_message(
         )
         print("****System Output in text to Chat:****")
         print(response.output_text)
+        print("Chatbot:")
+        print(currentConversationId)
         print("**************************************")
         return PlainTextResponse(response.output_text)
     else:
@@ -114,7 +133,10 @@ async def inpaint(
         prompt = request.prompt
         model = request.model
         guidance_scale = request.guidance_scale
-
+        print("prompt")
+        print(prompt)
+        print("model")
+        print(model)
         if model == 0:
             prompt = request.get_prepared_prompt()
             # Prompt Enhancing
